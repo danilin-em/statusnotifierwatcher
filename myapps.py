@@ -1,43 +1,43 @@
-#!/bin/env python3
-# snitray.py
+""" My Apps
+See Apps in tray
+File: snitray.py
+"""
 
 import dbus
 import dbus.service
 
-DBUS_PROPERTIES = 'org.freedesktop.DBus.Properties'
+import vars
 
-SERVICE_NAME = 'StatusNotifierWatcher'
-SERVICE_BUS_NAME = 'org.kde.%s' % SERVICE_NAME
-SERVICE_OBJECT_PATH = '/%s' % SERVICE_NAME
-
-ITEM_NAME = 'StatusNotifierItem'
-ITEM_OBJECT_PATH = '/%s' % ITEM_NAME
-ITEM_INTERFACE = 'org.kde.%s' % ITEM_NAME
 
 class Apps:
-    """docstring for Apps"""
-    __shm_path = '/dev/shm/%s' % SERVICE_BUS_NAME
+    """ Apps """
+    __shm_path = '/dev/shm/%s' % vars.SERVICE_BUS_NAME
+
     def __init__(self):
         self.__bus = dbus.SessionBus()
-    def get_bus_props(self, name):
+
+    def get_bus_props(self, name) -> str:
+        """ Get Title prop by DBus name """
         try:
-            proxy = self.__bus.get_object(name, ITEM_OBJECT_PATH)
-            iface = dbus.Interface(proxy, dbus_interface=DBUS_PROPERTIES)
-            props = iface.GetAll(ITEM_INTERFACE)
+            proxy = self.__bus.get_object(name, vars.ITEM_OBJECT_PATH)
+            iface = dbus.Interface(proxy, dbus_interface=vars.DBUS_PROPERTIES)
+            props = iface.GetAll(vars.ITEM_INTERFACE)
             return str(props['Title'])
-        except dbus.exceptions.DBusException as e:
-            return None
+        except dbus.exceptions.DBusException:
+            return ''
+
     def shm_bus_names(self):
-        names = []
-        with open(self.__shm_path, 'r') as fp:
-            line = fp.readline()
+        """ Read cache file """
+        with open(self.__shm_path, 'r') as file:
+            line = file.readline()
             cnt = 1
             while line:
                 yield line.strip()
-                line = fp.readline()
+                line = file.readline()
                 cnt += 1
 
     def items(self):
+        """ Collect apps names """
         items = []
         for name in self.shm_bus_names():
             props = self.get_bus_props(name)
@@ -46,10 +46,13 @@ class Apps:
             items.append(props)
         return items
 
+
 def main():
+    """ Init """
     apps_iface = Apps()
     apps_list = apps_iface.items()
     print(apps_list)
+
 
 if __name__ == '__main__':
     main()
