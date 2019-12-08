@@ -33,7 +33,7 @@ class StatusNotifierWatcher(dbus.service.Object):
         return True
 
     @dbus.service.method(vars.SERVICE_BUS_NAME)
-    def RegisterStatusNotifierItem(self, item):
+    def RegisterStatusNotifierItem(self, item: str):
         """ DBus method: RegisterStatusNotifierItem """
         self.shm_add(item)
         print(vars.ITEM_OBJECT_PATH, item)
