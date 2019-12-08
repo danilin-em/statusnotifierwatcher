@@ -22,3 +22,22 @@ xembedsniproxy
 python3 myapps.py
 
 ```
+
+## FAQ:
+
+**Q:**
+
+```
+
+Traceback (most recent call last):
+  File "statusnotifierwatcher.py", line 45, in <module>
+    from gi.repository import GLib
+ModuleNotFoundError: No module named 'gi'
+
+```
+
+**A:**
+
+See about *gi* module: https://askubuntu.com/questions/80448/what-would-cause-the-gi-module-to-be-missing-from-python
+
+---
